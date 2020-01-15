@@ -1,0 +1,21 @@
+/**********************************************************************/
+/* Données à intrégrer dans la table "LIVRE_TRADUIT"                  */
+/* Attention les requêtes d'insertion sont à adapter                  */
+/**********************************************************************/
+
+
+
+-- ajouter les livres traduits ci-dessous
+INSERT INTO LIVRETRADUIT VALUES('014017737X','THE PEARL','BR') => ('LA PERLE')
+INSERT INTO LIVRETRADUIT VALUES('0465026567','GÖDEL ESCHER BACH: AN ETERNAL GOLDEN BRAID','BR') => ('GODEL ESCHER BACH : LES BRINS D''UNE GUIRLANDE')
+INSERT INTO LIVRETRADUIT VALUES('2220080234','NOUVELLES APPLICATIONS DES BASES DE DONNÉES','FR') =>('NEW APPLICATIONS OF DATABASES')
+
+
+
+
+
+--ajouter les exemplaires ci-dessous
+exemplaire (10000, '10-04-1985', 1000, 'EMPRUNTABLE', 'BON') => ('THE PEARL')
+exemplaire (12000, '11-05-1999', 1500, 'EMPRUNTABLE', 'BON') => ('GÖDEL ESCHER BACH: AN ETERNAL GOLDEN BRAID')
+exemplaire (13000, '27-10-2014', 2000, 'EMPRUNTABLE', 'BON') => ('NOUVELLES APPLICATIONS DES BASES DE DONNÉES')
+

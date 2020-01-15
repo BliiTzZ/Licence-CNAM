@@ -1,0 +1,18 @@
+/*****************************************************************************/
+/ Ajouter les données ci-dessous dans la base bibliotheque                   */
+/*****************************************************************************/
+
+
+
+
+-- créer les bibliothèques ci-dessous
+bibliotheque ('EMILE ZOLA')
+bibliotheque ('VICTOR HUGO')
+
+
+-- tous les abonnés DUPONT sont membres de la bibliothèque EMILE ZOLA
+('DUPONT' ) => ('EMILE ZOLA')
+
+
+-- les autres abonnés sont membres de la bibliothèque VICTOR HUGO
+<> ('DUPONT' ) => ('VICTOR HUGO')

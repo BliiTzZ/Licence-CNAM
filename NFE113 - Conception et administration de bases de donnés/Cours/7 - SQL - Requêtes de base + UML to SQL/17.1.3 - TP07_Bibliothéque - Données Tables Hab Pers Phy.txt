@@ -1,0 +1,18 @@
+/*****************************************************************************/
+/ Ajouter les données ci-dessous dans la base bibliotheque                   */
+/*****************************************************************************/
+
+
+
+
+-- ajouter les personnes physiques ci-dessous
+personnephysique ('LORCA', 'BERNARD', 15)
+personnephysique ('CLANET', 'LUCIEN', 40)
+
+
+
+
+-- ajouter les habitants ci-dessous
+habitant ('NABILA', 'ZOE', 78) => ('MONTPELLIER')
+habitant ('HUGO', 'EMILE', 53) => ('BEZIER')
+
