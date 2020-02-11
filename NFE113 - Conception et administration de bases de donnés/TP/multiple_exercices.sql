@@ -21,9 +21,6 @@ DROP TRIGGER If EXISTS ABONNE_TG ON ABONNE;
 
 
 
-
-
-
 /* Hiérarchie Personne Physique *****************************************************************************/
 CREATE TABLE PERSONNEPHYSIQUE(
 	IDPERSONNEPHYSIQUE SERIAL,
