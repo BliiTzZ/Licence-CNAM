@@ -1,0 +1,176 @@
+---- Lexique ----
+
+
+    OSPF : Protocole de routage (igp : interior gateway protocol)
+
+    adresse public IPV4 (les classe n'existent plus) = 32bits sortir avec une adresse public
+
+    adressage privé = si on sors on est dropé
+
+---- Exo ---- 
+
+    entreprise A => ressources => site
+                                * Paris
+                                * Alès
+
+    entreprise B => ressources
+
+    DMZ = serveur web (adresse publique)
+
+    simulation de l'internet => accès a un ressource externe (BGP)
+
+
+---- config ----
+
+    routeur 2811 (wic 2T, wic cover et NM cover) : R1 (firewall)
+
+    switch 2960 : AlphaAles
+
+    simuler 3 switch avec vlan
+
+    2 postes de travail sous reseau (Vlan 10 et 20)
+
+    serveur WebAlpha: (serveur web) (Vlan 30)
+
+    serveur : DHCP (Vlan 10)
+
+    Vlan 10 : 10.1.10.0/24
+    (RLE) Gw 254
+    Vlan20 : 10.1.20.0/24
+    (RLE) Gw 254
+    Vlan30 : 10.1.30.0/24
+    (DMZ) Gw 254
+
+Lier tout les cables 
+
+
+---- commandes important ---- 
+    show vlan - sh vlan: voir les vlan
+
+    enable - en
+
+    conf t
+
+    ctrl + Z : revenir en arrière
+---- switch ----
+
+    ctrl + Z : revenir en arrière
+
+    show vlan - sh vlan: voir les vlan
+
+    enable - en
+
+    conf t
+
+    vlan 10 
+    name RLE10
+    vlan 20
+    name RLE20
+    vlan 30
+    name DMZ
+
+    int fa0/1
+    switchport mode access
+    switchport mode vlan 10
+
+    int fa0/2
+    switchport mode access
+    switchport mode vlan 20
+
+    int fa0/4
+    switchport mode access
+    switchport mode vlan 30
+
+    int fa0/3
+    switchport mode access
+    switchport mode vlan 10
+
+    sh run : voir les config
+
+    wr : sauvegarder (important)
+
+--- config ip (desktop et ip configuration) ----
+
+---- serveur web ----
+
+    10.1.30.1 ( 1er dispo)
+    255.255.255.0
+    10.1.30.254 
+
+    DHCP
+    10.1.10.1
+    255.255.255.0
+    10.1.10.254
+
+    mais aucun ping donc
+
+----parametrage serveur DHCP ----
+    services -> dhcp 
+
+    service -> on 
+
+    ne pas modifier serverPool
+    10.1.10.254
+    pas d'adresse dns
+    IP de depart - 10.1.10.100
+    masque correct
+    max number - 100
+
+    puis 
+    serverPool2
+    10.1.20.254
+    pas d'adresse dns
+    IP de depart - 10.1.20.100
+    masque correct
+    max number - 100
+
+---- vlan 10 ----
+    desktop -> dhcp 
+    puis 
+    ping 10.1.10.1 qui fonctionne
+
+---- vlan 20 ----
+
+    desktop -> dhcp 
+    ip non fonctionnel donc passer par un routeur mais n'accepte aucun broadcast
+    donc config particuliere pour accepter un certain type de broadcast pour choper un serveur distant pour donner une adresse (routage one stick)
+
+----- faire passer tout les Vlan - Routeur ----
+
+    CLI -> 
+    en 
+    conf t
+    int fa0/0
+    no shut
+
+    int fa0/0.10
+    encapsulation dot1Q 10
+    ip address 10.1.10.254 255.255.255.0
+
+    int fa0/0.20
+    encapsulation dot1Q 20
+    ip address 10.1.20.254 255.255.255.0
+
+    int fa0/0.30
+    encapsulation dot1Q 30
+    ip address 10.1.30.254 255.255.255.0
+
+---- switch ---- 
+
+    en 
+    conf t
+    int fa0/5
+    switchport mode trunk
+
+---- webalpha ----
+
+    ping 10.1.30.1
+
+---- routeur ---- 
+    en
+    conf t 
+    int fa0/0.20
+    ip helper-address 10.1.10.1
+
+---- vlan 10 ----
+ping 10.1.20.100 (ou 101)
