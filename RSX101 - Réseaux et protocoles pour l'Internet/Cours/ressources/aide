@@ -409,3 +409,62 @@ network 10.100.100.8 0.0.0.3
 redistribute ospf 10 metric 1200 20 255 255 1500
 router ospf 10
 redistribute eigrp 200 subnets
+
+
+---- Nouveau routeur(R4), serveur (google 25.10.12.12), PC(internaute 25.10.12.23) et switch(internet)----
+---- com ----
+internet : 25.10.12.0/24 Gw 25.10.12.254
+
+---- R4 ----
+int fa0/0
+ip address 25.10.12.254 255.255.255.0
+no shut
+
+--- fil rouge R4 a R1  s0/1/1 ----
+
+---- R4 ----
+int s0/1/1
+ip address 58.12.10.5 255.255.255.252
+no shut
+---- R1 ----
+int s0/1/1
+ip address 58.12.10.6 255.255.255.252
+no shut
+ping 58.12.10.5
+
+---- R4 ----
+router bgp 100
+neighbor 58.12.10.6 remote-as 101
+network 25.10.12.0 mask 255.255.255.0
+
+
+---- R1 ----
+router bgp 101
+neighbor 58.12.10.6 remote-as 100
+sh ip bgp su
+network 46.15.5.6 mask 255.255.255.255
+ip route 46.15.5.6 255.255.255.255 null 0
+sh ip route
+
+---- R4 ----
+sh ip route
+
+--- definir les pates exterieurs et interieurs
+---- R1 ----
+
+int s0/1/1
+ip nat outside
+int fa0/0.30
+ip nat inside
+ip nat inside source static 10.1.30.1 46.15.5.6
+
+
+---- internaute 25.10.12.23 ----
+
+desktop -> ip config
+
+25.10.12.23
+255.255.255.0
+25.10.12.254
+
+
