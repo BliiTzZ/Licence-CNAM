@@ -22,7 +22,7 @@
 
 ---- config ----
 
-    routeur 2811 (wic 2T, wic cover et NM cover) : R1 (firewall)
+    routeur 2811 (wic 2T, wic cover et NM cover) : R1 (firewall) (mettre 4 de coté)
 
     switch 2960 : AlphaAles
 
@@ -34,6 +34,8 @@
 
     serveur : DHCP (Vlan 10)
 
+--- com ---
+    Alpha Alès :-
     Vlan 10 : 10.1.10.0/24
     (RLE) Gw 254
     Vlan20 : 10.1.20.0/24
@@ -41,7 +43,7 @@
     Vlan30 : 10.1.30.0/24
     (DMZ) Gw 254
 
-Lier tout les cables 
+Lier tout les cables sur le switch
 
 
 ---- commandes important ---- 
@@ -97,7 +99,7 @@ Lier tout les cables
     255.255.255.0
     10.1.30.254 
 
-    DHCP
+---- DHCP ----
     10.1.10.1
     255.255.255.0
     10.1.10.254
@@ -173,4 +175,237 @@ Lier tout les cables
     ip helper-address 10.1.10.1
 
 ---- vlan 10 ----
-ping 10.1.20.100 (ou 101)
+
+    ping 10.1.20.100 (ou 101)
+
+---- Nouveau routeur(R2), switch (Paris), 2 PC (vlan 10 et 20)----
+Lier tout les cables sur le switch
+---- com -----
+
+    Alpha Paris : 
+    Vlan 10 : 10.75.10.0/24 Gw 10.75.10.254
+    Vlan 20 : 10.75.20.0/24 Gw 10.75.20.254
+
+
+---- DHCP ---- 
+
+    service -> dhcp 
+
+    serverPool3
+    10.75.10.254
+    pas dns
+    10.75.10.100
+
+    serverPool4
+    10.75.20.254
+    pas dns
+    10.75.20.100
+
+---- vlan 10 ----
+    desktop -> dhcp 
+---- vlan 20 ----
+    desktop -> dhcp 
+---- switch Paris ----
+
+    en 
+    conf t 
+    vlan 10 
+    name RLE10-Paris
+    vlan 20 
+    name RLE10-Paris
+    sh vlan
+
+    ctrl + Z
+    en 
+    conf t 
+    int fa0/1
+    switchport mode access
+    switchport access vlan 10
+    int fa0/2
+    switchport mode access
+    switchport access vlan 20
+    int fa0/3
+    switchport mode trunk
+
+---- routeur R2 ----
+
+int fa0/0
+no shut 
+
+int fa0/0.10
+encapsulation dot1Q 10
+ip address 10.75.10.254 255.255.255.0
+
+int fa0/0.20
+encapsulation dot1Q 20
+ip address 10.75.20.254 255.255.255.0
+
+
+---- prendre cable rouge horlonge et lier serial routeur vers routeur ---- 
+---- com cable rouge----
+10.100.100.4/30
+
+---- Routeur R2 ----
+
+int s0/0/0 
+ip address 10.100.100.5 255.255.255.252
+no shut
+
+
+---- Routeur R1 ----
+
+int s0/0/0 
+ip address 10.100.100.6 255.255.255.252
+no shut
+
+---- Routeur R2 ----
+
+ping 10.100.100.6
+
+---- Routeur R1 ----
+
+ping 10.100.100.5
+
+--- etablir relation de voisinage ospf multicast fil rouge (echanger les routes ) ----
+
+---- Routeur R2 Paris ----
+conf t
+router ospf 10 (10 partout)
+(que sur les reseaux directy connected) network 10.75.10.0 0.0.0.255 area 75 (wild card mask)
+(que sur les reseaux directy connected) network 10.75.20.0 0.0.0.255 area 75 (wild card mask)
+(que sur les reseaux directy connected) network 10.100.100.4 0.0.0.3 area 0(2derniers bit 2+1)
+
+---- Routeur R1 Alès ----
+conf t 
+router ospf 10 (10 partout)
+network 10.1.10.0 0.0.0.255 area 30
+network 10.1.20.0 0.0.0.255 area 30
+network 10.100.100.4 0.0.0.3 area 0
+
+show ip route (voir ospf) 
+
+---- Routeur R2 Paris ----
+ping 10.1.10.1
+conf t 
+int fa0/0.10
+ip helper-address 10.1.10.1
+int fa0/0.20
+ip helper-address 10.1.10.1
+
+
+---- Vlan 10 Paris ----
+desktop -> ip config -> dhcp
+
+---- Vlan 20 Paris ----
+desktop -> ip config -> dhcp
+
+---- Nouveau routeur (R3) ---- 
+---- com ---- 
+Beta Marseille :
+Vlan 10 : 192.168.1.0/24 Gw 192.168.1.254
+Vlan 20 : 192.168.2.0/24 Gw 192.168.1.254
+
+---- Nouveau switch(Marseille) ----
+
+---- 2 PC (vlan 10 marseille et 20 marseille) ----
+
+---- Serveur DHCP marseille----
+
+---- Lier toute les connexion ---- 
+
+---- switch marseille ----
+conf t 
+vlan 10
+name RLE-10-beta
+vlan 20
+name RLE-20-beta
+
+int fa0/1 
+switchport mode access
+switchport access vlan 10
+
+int fa0/2 
+switchport mode access
+switchport access vlan 20
+
+int fa0/3
+switchport mode access
+switchport access vlan 10
+
+int fa0/4
+switchport mode trunk
+
+---- vlan 10 ----
+desktop -> ip config -> dhcp
+---- vlan 20 ----
+desktop -> ip config -> dhcp
+
+---- DHCP marseille ----
+
+    desktop -> ipconfig 
+
+    192.168.1.1
+    255.255.255.0
+    192.168.1.254
+
+    service -> dhcp -> on 
+
+    ne pas modifier serverPool
+    192.168.1.0
+    255.255.255.0
+    192.168.1.254
+    pas d'adresse dns
+    IP de depart - 192.168.1.100
+    masque correct
+    max number - 100
+
+    puis 
+    serverPool2
+    192.168.2.0
+    255.255.255.0
+    pas d'adresse dns
+    IP de depart - 192.168.2.100
+    masque correct
+    max number - 100
+
+---- lier cable rouge horloge R3 a R1 serial 0/0/1 ----
+
+---- Routeur R3 ----
+int fa0/0
+no shut
+
+int s0/0/1
+ip address 10.100.100.10 255.255.255.252
+no shut
+
+
+---- Routeur R1 ----
+
+int s0/0/1
+ip address 10.100.100.9 255.255.255.252
+no shut
+
+--- routeur R3 ----
+conf t 
+int fa0/0.10
+encapsulation dot1Q 10
+ip address 192.168.1.254 255.255.255.0
+
+int fa0/0.20
+encapsulation dot1Q 20
+ip address 192.168.2.254 255.255.255.0
+ip helper-address 192.168.1.1
+
+router eigrp 200
+no auto-summary
+network 192.168.1.0 0.0.0.255
+network 192.168.2.0 0.0.0.255
+network 10.100.100.8 0.0.0.3
+
+--- routeur R1 ----
+sh ip route
+router eigrp 200
+network 10.100.100.8 0.0.0.3
+redistribute ospf 10 metric 1200 20 255 255 1500
+router ospf 10
+redistribute eigrp 200 subnets
