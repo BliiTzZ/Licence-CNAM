@@ -107,6 +107,7 @@ Lier tout les cables sur le switch
     mais aucun ping donc
 
 ----parametrage serveur DHCP ----
+
     services -> dhcp 
 
     service -> on 
@@ -127,6 +128,7 @@ Lier tout les cables sur le switch
     max number - 100
 
 ---- vlan 10 ----
+
     desktop -> dhcp 
     puis 
     ping 10.1.10.1 qui fonctionne
@@ -169,6 +171,7 @@ Lier tout les cables sur le switch
     ping 10.1.30.1
 
 ---- routeur ---- 
+
     en
     conf t 
     int fa0/0.20
@@ -179,7 +182,9 @@ Lier tout les cables sur le switch
     ping 10.1.20.100 (ou 101)
 
 ---- Nouveau routeur(R2), switch (Paris), 2 PC (vlan 10 et 20)----
+
 Lier tout les cables sur le switch
+
 ---- com -----
 
     Alpha Paris : 
@@ -202,9 +207,13 @@ Lier tout les cables sur le switch
     10.75.20.100
 
 ---- vlan 10 ----
+
     desktop -> dhcp 
+
 ---- vlan 20 ----
+
     desktop -> dhcp 
+
 ---- switch Paris ----
 
     en 
@@ -229,81 +238,87 @@ Lier tout les cables sur le switch
 
 ---- routeur R2 ----
 
-int fa0/0
-no shut 
+    int fa0/0
+    no shut 
 
-int fa0/0.10
-encapsulation dot1Q 10
-ip address 10.75.10.254 255.255.255.0
+    int fa0/0.10
+    encapsulation dot1Q 10
+    ip address 10.75.10.254 255.255.255.0
 
-int fa0/0.20
-encapsulation dot1Q 20
-ip address 10.75.20.254 255.255.255.0
+    int fa0/0.20
+    encapsulation dot1Q 20
+    ip address 10.75.20.254 255.255.255.0
 
 
 ---- prendre cable rouge horlonge et lier serial routeur vers routeur ---- 
 ---- com cable rouge----
-10.100.100.4/30
+
+    10.100.100.4/30
 
 ---- Routeur R2 ----
 
-int s0/0/0 
-ip address 10.100.100.5 255.255.255.252
-no shut
-
+    int s0/0/0 
+    ip address 10.100.100.5 255.255.255.252
+    no shut
 
 ---- Routeur R1 ----
 
-int s0/0/0 
-ip address 10.100.100.6 255.255.255.252
-no shut
+    int s0/0/0 
+    ip address 10.100.100.6 255.255.255.252
+    no shut
 
 ---- Routeur R2 ----
 
-ping 10.100.100.6
+    ping 10.100.100.6
 
 ---- Routeur R1 ----
 
-ping 10.100.100.5
+    ping 10.100.100.5
 
 --- etablir relation de voisinage ospf multicast fil rouge (echanger les routes ) ----
 
 ---- Routeur R2 Paris ----
-conf t
-router ospf 10 (10 partout)
-(que sur les reseaux directy connected) network 10.75.10.0 0.0.0.255 area 75 (wild card mask)
-(que sur les reseaux directy connected) network 10.75.20.0 0.0.0.255 area 75 (wild card mask)
-(que sur les reseaux directy connected) network 10.100.100.4 0.0.0.3 area 0(2derniers bit 2+1)
+
+    conf t
+    router ospf 10 (10 partout)
+    (que sur les reseaux directy connected) network 10.75.10.0 0.0.0.255 area 75 (wild card mask)
+    (que sur les reseaux directy connected) network 10.75.20.0 0.0.0.255 area 75 (wild card mask)
+    (que sur les reseaux directy connected) network 10.100.100.4 0.0.0.3 area 0(2derniers bit 2+1)
 
 ---- Routeur R1 Alès ----
-conf t 
-router ospf 10 (10 partout)
-network 10.1.10.0 0.0.0.255 area 30
-network 10.1.20.0 0.0.0.255 area 30
-network 10.100.100.4 0.0.0.3 area 0
 
-show ip route (voir ospf) 
+    conf t 
+    router ospf 10 (10 partout)
+    network 10.1.10.0 0.0.0.255 area 30
+    network 10.1.20.0 0.0.0.255 area 30
+    network 10.100.100.4 0.0.0.3 area 0
+
+    show ip route (voir ospf) 
 
 ---- Routeur R2 Paris ----
-ping 10.1.10.1
-conf t 
-int fa0/0.10
-ip helper-address 10.1.10.1
-int fa0/0.20
-ip helper-address 10.1.10.1
+
+    ping 10.1.10.1
+    conf t 
+    int fa0/0.10
+    ip helper-address 10.1.10.1
+    int fa0/0.20
+    ip helper-address 10.1.10.1
 
 
 ---- Vlan 10 Paris ----
-desktop -> ip config -> dhcp
+
+    desktop -> ip config -> dhcp
 
 ---- Vlan 20 Paris ----
-desktop -> ip config -> dhcp
+
+    desktop -> ip config -> dhcp
 
 ---- Nouveau routeur (R3) ---- 
 ---- com ---- 
-Beta Marseille :
-Vlan 10 : 192.168.1.0/24 Gw 192.168.1.254
-Vlan 20 : 192.168.2.0/24 Gw 192.168.1.254
+
+    Beta Marseille :
+    Vlan 10 : 192.168.1.0/24 Gw 192.168.1.254
+    Vlan 20 : 192.168.2.0/24 Gw 192.168.1.254
 
 ---- Nouveau switch(Marseille) ----
 
@@ -314,31 +329,35 @@ Vlan 20 : 192.168.2.0/24 Gw 192.168.1.254
 ---- Lier toute les connexion ---- 
 
 ---- switch marseille ----
-conf t 
-vlan 10
-name RLE-10-beta
-vlan 20
-name RLE-20-beta
 
-int fa0/1 
-switchport mode access
-switchport access vlan 10
+    conf t 
+    vlan 10
+    name RLE-10-beta
+    vlan 20
+    name RLE-20-beta
 
-int fa0/2 
-switchport mode access
-switchport access vlan 20
+    int fa0/1 
+    switchport mode access
+    switchport access vlan 10
 
-int fa0/3
-switchport mode access
-switchport access vlan 10
+    int fa0/2 
+    switchport mode access
+    switchport access vlan 20
 
-int fa0/4
-switchport mode trunk
+    int fa0/3
+    switchport mode access
+    switchport access vlan 10
+
+    int fa0/4
+    switchport mode trunk
 
 ---- vlan 10 ----
-desktop -> ip config -> dhcp
+
+    desktop -> ip config -> dhcp
+
 ---- vlan 20 ----
-desktop -> ip config -> dhcp
+
+    desktop -> ip config -> dhcp
 
 ---- DHCP marseille ----
 
@@ -371,100 +390,156 @@ desktop -> ip config -> dhcp
 ---- lier cable rouge horloge R3 a R1 serial 0/0/1 ----
 
 ---- Routeur R3 ----
-int fa0/0
-no shut
 
-int s0/0/1
-ip address 10.100.100.10 255.255.255.252
-no shut
+    int fa0/0
+    no shut
+
+    int s0/0/1
+    ip address 10.100.100.10 255.255.255.252
+    no shut
 
 
 ---- Routeur R1 ----
 
-int s0/0/1
-ip address 10.100.100.9 255.255.255.252
-no shut
+    int s0/0/1
+    ip address 10.100.100.9 255.255.255.252
+    no shut
 
 --- routeur R3 ----
-conf t 
-int fa0/0.10
-encapsulation dot1Q 10
-ip address 192.168.1.254 255.255.255.0
 
-int fa0/0.20
-encapsulation dot1Q 20
-ip address 192.168.2.254 255.255.255.0
-ip helper-address 192.168.1.1
+    conf t 
+    int fa0/0.10
+    encapsulation dot1Q 10
+    ip address 192.168.1.254 255.255.255.0
 
-router eigrp 200
-no auto-summary
-network 192.168.1.0 0.0.0.255
-network 192.168.2.0 0.0.0.255
-network 10.100.100.8 0.0.0.3
+    int fa0/0.20
+    encapsulation dot1Q 20
+    ip address 192.168.2.254 255.255.255.0
+    ip helper-address 192.168.1.1
+
+    router eigrp 200
+    no auto-summary
+    network 192.168.1.0 0.0.0.255
+    network 192.168.2.0 0.0.0.255
+    network 10.100.100.8 0.0.0.3
 
 --- routeur R1 ----
-sh ip route
-router eigrp 200
-network 10.100.100.8 0.0.0.3
-redistribute ospf 10 metric 1200 20 255 255 1500
-router ospf 10
-redistribute eigrp 200 subnets
+
+    sh ip route
+    router eigrp 200
+    network 10.100.100.8 0.0.0.3
+    redistribute ospf 10 metric 1200 20 255 255 1500
+    router ospf 10
+    redistribute eigrp 200 subnets
 
 
 ---- Nouveau routeur(R4), serveur (google 25.10.12.12), PC(internaute 25.10.12.23) et switch(internet)----
 ---- com ----
-internet : 25.10.12.0/24 Gw 25.10.12.254
+
+    internet : 25.10.12.0/24 Gw 25.10.12.254
 
 ---- R4 ----
-int fa0/0
-ip address 25.10.12.254 255.255.255.0
-no shut
+
+    int fa0/0
+    ip address 25.10.12.254 255.255.255.0
+    no shut
 
 --- fil rouge R4 a R1  s0/1/1 ----
 
 ---- R4 ----
-int s0/1/1
-ip address 58.12.10.5 255.255.255.252
-no shut
----- R1 ----
-int s0/1/1
-ip address 58.12.10.6 255.255.255.252
-no shut
-ping 58.12.10.5
 
----- R4 ----
-router bgp 100
-neighbor 58.12.10.6 remote-as 101
-network 25.10.12.0 mask 255.255.255.0
-
+    int s0/1/1
+    ip address 58.12.10.5 255.255.255.252
+    no shut
 
 ---- R1 ----
-router bgp 101
-neighbor 58.12.10.6 remote-as 100
-sh ip bgp su
-network 46.15.5.6 mask 255.255.255.255
-ip route 46.15.5.6 255.255.255.255 null 0
-sh ip route
+
+    int s0/1/1
+    ip address 58.12.10.6 255.255.255.252
+    no shut
+    ping 58.12.10.5
 
 ---- R4 ----
-sh ip route
+
+    router bgp 100
+    neighbor 58.12.10.6 remote-as 101
+    network 25.10.12.0 mask 255.255.255.0
+
+---- R1 ----
+
+    router bgp 101
+    neighbor 58.12.10.6 remote-as 100
+    sh ip bgp su
+    network 46.15.5.6 mask 255.255.255.255
+    ip route 46.15.5.6 255.255.255.255 null 0
+    sh ip route
+
+---- R4 ----
+
+    sh ip route
 
 --- definir les pates exterieurs et interieurs
 ---- R1 ----
 
-int s0/1/1
-ip nat outside
-int fa0/0.30
-ip nat inside
-ip nat inside source static 10.1.30.1 46.15.5.6
+    int s0/1/1
+    ip nat outside
+    int fa0/0.30
+    ip nat inside
+    ip nat inside source static 10.1.30.1 46.15.5.6
 
 
 ---- internaute 25.10.12.23 ----
 
-desktop -> ip config
+    desktop -> ip config
 
-25.10.12.23
-255.255.255.0
-25.10.12.254
+    25.10.12.23
+    255.255.255.0
+    25.10.12.254
+
+---- R1 ----
+
+    ip access-list extended FiltrageHttp
+    permit tcp any 46.15.5.6 0.0.0.0 eq 80
+    permit tcp any any eq 179
+    deny ip any any
+
+    int s0/1/1
+    ip access-group FiltrageHttp in
+    sh ip access-lists
+
+    ip access-list extended FiltrageSortieDMZ
+    permit tcp 10.1.30.1 0.0.0.0 any established
+
+    ip route 0.0.0.0 0.0.0.0 58.12.10.5
+
+    router ospf 10
+    default-information originate
+
+    router eigrp 200
+    redistribute static
+
+    int fa0/0.10 
+    ip nat inside
+
+    int fa0/0.20
+    ip nat inside
+
+    int s0/0/0
+    ip nat inside
+
+    int s0/0/1
+    ip nat inside
+
+    ip nat inside source list VersInternet interface s0/1/1 overload
+    
+    ip access-list extended VersInternet
+    permit ip 10.1.10.0 0.0.0.255 any
+    permit ip 10.1.20.0 0.0.0.255 any
+    permit ip 192.168.1.0 0.0.0.255 any
+    permit ip 192.168.2.0 0.0.0.255 any
+    permit ip 10.75.0.0 0.0.255.255 any
+    deny ip any any
+---- ----
+
 
 
