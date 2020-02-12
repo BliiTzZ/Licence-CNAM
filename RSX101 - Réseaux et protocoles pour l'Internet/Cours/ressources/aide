@@ -470,7 +470,7 @@ Lier tout les cables sur le switch
 ---- R1 ----
 
     router bgp 101
-    neighbor 58.12.10.6 remote-as 100
+    neighbor 58.12.10.5 remote-as 100
     sh ip bgp su
     network 46.15.5.6 mask 255.255.255.255
     ip route 46.15.5.6 255.255.255.255 null 0
@@ -551,4 +551,5 @@ poste
     vlan 10 marseille - DHCP (config switch mode)
     internaute - static 25.10.12.24
 
+    sh ip nat trans
 ---- ----
