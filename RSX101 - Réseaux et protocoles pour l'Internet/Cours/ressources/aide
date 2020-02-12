@@ -7,6 +7,8 @@
 
     adressage privé = si on sors on est dropé
 
+    cassandre network, nat 
+
 ---- Exo ---- 
 
     entreprise A => ressources => site
@@ -519,7 +521,7 @@ Lier tout les cables sur le switch
     redistribute static
 
     int fa0/0.10 
-    ip nat inside
+    ip nat inside (translation d'adresse)
 
     int fa0/0.20
     ip nat inside
@@ -539,7 +541,14 @@ Lier tout les cables sur le switch
     permit ip 192.168.2.0 0.0.0.255 any
     permit ip 10.75.0.0 0.0.255.255 any
     deny ip any any
+
+    ip access-list extended FiltrageHttp
+    25 permit tcp any any established
+---- test ----
+poste 
+    vlan 10 Ales - HCP (config switch mode)
+    vlan 20 paris - DHCP (config switch mode)
+    vlan 10 marseille - DHCP (config switch mode)
+    internaute - static 25.10.12.24
+
 ---- ----
-
-
-
